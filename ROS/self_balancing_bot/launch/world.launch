@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+  <!-- Robot pose -->
+  <arg name="x" default="0"/>
+  <arg name="y" default="0"/>
+  <arg name="z" default="0"/>
+  <arg name="roll" default="0"/>
+  <arg name="pitch" default="0"/>
+  <arg name="yaw" default="1.5714"/>
+  <arg name ="robot_name" default="self_balancing_bot" />
+
+
+
+  <!-- World File -->
+  <arg name="world_file" default="$(find self_balancing_bot)/worlds/empty.world"/>
+
+  <!-- Robot description -->
+  <param name="robot_description" command="$(find xacro)/xacro $(find self_balancing_bot)/urdf/self_balancing_bot.urdf" />
+
+  <!-- Spawn My Robot -->
+  <node name="bot_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" 
+        args="-urdf -param robot_description -model self_balancing_bot
+              -x $(arg x) -y $(arg y) -z $(arg z)
+              -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)"/>
+
+
+  <!-- Including World File --> 
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="use_sim_time" value="true"/>
+    <arg name="debug" value="false"/>
+    <arg name="gui" value="true" />
+    <arg name="world_name" value="$(arg world_file)"/>
+    <arg name="verbose" value="true"/>
+  </include>
+  
+  
+  
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" >
+    <param name="gui"  value="true"/>
+    <param name="rate"  value="20"/>
+    <param name= "publish_default_positions" value="true" />
+    <param name= "publish_default_velocities" value="true" />
+    <!-- <remap from="/joint_states" to="/self_balancing_bot/joint_states" />  -->
+  </node>
+
+
+
+
+
+  
+  <!-- launch rviz -->
+  
+ <!-- <node name="rviz" pkg="rviz" type="rviz" respawn="false"
+      args="-d $(find self_balancing_bot)/default.rviz" /> -->
+
+
+  
+  <!-- Loading Controller Configuration from yaml to parameter server -->
+
+  <!-- <rosparam file="$(find self_balancing_bot)/scripts/motor_config_v.yaml" command="load" ns="/self_balancing_bot" />-->  
+  <!-- <rosparam file="$(find self_balancing_bot)/scripts/control_params.yaml" command="load" ns = "/self_balancing_bot" /> -->
+  <rosparam file="$(find self_balancing_bot)/scripts/diff_config.yaml" command="load" ns = "/self_balancing_bot" />
+
+  <!-- <node name="Control_Spawner" pkg="controller_manager" type="spawner"  respawn="false" 
+    output="screen"  args="joint_state_controller" />
+  <rosparam file="$(find self_balancing_bot)/scripts/jstate.yaml" command="load" ns = "/self_balancing_bot" />
+ -->
+
+  
+
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
+    <param name="publish_frequency" value="20" />
+    <!-- <remap from="/joint_states" to="/self_balancing_bot/joint_states" />  -->
+  </node>
+
+
+  <!-- Loading controllers -->
+
+  <!-- <node name="Control_Spawner" pkg="controller_manager" type="spawner"  respawn="false" 
+    output="screen" ns="/self_balancing_bot" 
+    args="joint_state_controller
+          jointR_velocity_controller 
+          jointL_velocity_controller  
+             " >
+
+  </node> -->
+
+
+
+</launch>
+

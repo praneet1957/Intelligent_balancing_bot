@@ -1,0 +1,26 @@
+# self_balancing_bot:
+  
+joint_state_controller:
+  type : "joint_state_controller/JointStateController"
+  publish_rate : 50
+
+# bot_controller:
+#   type : effort_controllers/JointVelocityController
+#   joints:
+#     - L_wheel_shaft
+#     - R_wheel_shaft
+
+#   gains:
+#     L_wheel_shaft : {p: 100.0, i: 0.05, d: 10.0}
+#     R_wheel_shaft : {p: 100.0, i: 0.05, d: 10.0}
+
+jointL_velocity_controller:
+  type: effort_controllers/JointVelocityController
+  joint: L_wheel_shaft
+  pid: {p: 0.5, i: 0, d: 0.25}
+
+
+jointR_velocity_controller:
+  type: effort_controllers/JointVelocityController
+  joint: R_wheel_shaft
+  pid: {p: 0.0, i: 0, d: 0.0}

@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+
+<robot name="self_balancing_bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:property name="wheel_radius" value="0.325"/> 
+<xacro:property name="motor_width" value="0.18"/> 
+<xacro:property name="motor_height" value="0.225"/> 
+<xacro:property name="base_width" value="0.75"/> 
+<xacro:property name="wheel_width" value="0.25"/> 
+<xacro:property name="base_height" value="0.03"/> 
+<xacro:property name="side_height" value="0.5"/> 
+<xacro:property name="base_slot" value="0.6"/> 
+<xacro:property name="base_clearance" value="0.125"/> 
+<xacro:property name="base_length" value="0.6"/> 
+
+<xacro:property name="side_width"  value="0.6"/> 
+<xacro:property name="side_length" value="1.1"/> 
+<xacro:property name="motor_length" value="0.5"/> 
+
+<xacro:property name="mass_wheel" value="0.50"/> 
+<xacro:property name="mass_motor" value="0.5"/> 
+<xacro:property name="mass_base" value="0.25"/> 
+<xacro:property name="mass_side" value="0.25"/> 
+
+
+<gazebo reference="motor_L">
+  <material>Gazebo/Yellow</material>
+</gazebo>
+
+<gazebo reference="motor_R">
+  <material>Gazebo/Yellow</material>
+</gazebo>
+
+
+<gazebo reference="wheel_L">
+  <material>Gazebo/Black</material>
+</gazebo>
+
+<gazebo reference="wheel_R">
+  <material>Gazebo/Black</material>
+</gazebo>
+
+<gazebo reference="base">
+  <material>Gazebo/Blue</material>
+</gazebo>
+
+<gazebo reference="Top">
+  <material>Gazebo/Green</material>
+</gazebo>
+
+<gazebo reference="imu">
+  <material>Gazebo/Yellow</material>
+</gazebo>
+
+<!-- <gazebo reference="side_L">
+  <material>Gazebo/Red</material>
+</gazebo>
+
+<gazebo reference="side_R">
+  <material>Gazebo/Red</material>
+</gazebo> -->
+
+
+<!-- Gazebo Plugin -->
+<gazebo>
+  <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+    <robotNamespace>/self_balancing_bot</robotNamespace>
+  </plugin>
+</gazebo>
+
+
+
+
+  <link
+    name="base">
+    <inertial>
+      <origin
+        xyz="0 0 ${wheel_radius+motor_height/2 + base_height/2 + base_clearance}" rpy="0 0 0" />
+      <mass
+        value="${mass_base}" />
+      <inertia
+        ixx="${mass_base*base_length*base_length/12}"       ixy="0"    ixz="0"
+        iyy="${mass_base*base_width*base_width/3}"       iyz="0"
+        izz="${mass_base*base_length*base_length/12 + mass_base*base_width*base_width/3}" />
+    </inertial>
+
+    <visual>
+      <origin
+        xyz="0 0 ${wheel_radius+motor_height/2 + base_height/2 + base_clearance}"  rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://self_balancing_bot/meshes/base_link.stl" scale="10 8 10"/>
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+
+    <collision>
+      <origin
+        xyz="0 0 ${wheel_radius+motor_height/2 + base_height/2 + base_clearance}"  rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://self_balancing_bot/meshes/base_link.stl" scale="10 8 10"/>
+      </geometry>
+    </collision>
+
+  </link>
+
+
+
+  
+  
+
+
+
+  <link
+    name="motor_L">
+    <inertial>
+      <origin
+        xyz="0 0 0"  rpy="0 0 0" />
+      <mass
+        value="${mass_motor}" />
+      <inertia
+        ixx="${mass_motor*motor_length*motor_length/12 + mass_motor*motor_height*motor_height/12}"       ixy="0"    ixz="0"
+        iyy="${mass_motor*motor_width*motor_width/12   + mass_motor*motor_height*motor_height/12}"       iyz="0"
+        izz="${mass_motor*motor_width*motor_width/12   + mass_motor*motor_length*motor_length/12}" />
+    </inertial>
+
+    <visual>
+      <origin
+        xyz="0 0 0"  rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://self_balancing_bot/meshes/motor.STL"  scale="10 10 10" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 0 1" />
+      </material>
+    </visual>
+
+    <collision>
+      <origin
+        xyz="0 0 0"  rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://self_balancing_bot/meshes/motor.STL" scale="10 10 10"/>
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint type="fixed" name="L_motor_mount">
+    <origin xyz  = "${base_width} 0 ${wheel_radius}"  rpy="0 0 0" />
+    <parent link ="base" />
+    <child link ="motor_L" />
+    <axis xyz="1 0 0" rpy="0 0 0" />
+  </joint>
+
+
+
+
+  <link
+    name="wheel_L">
+
+    <inertial>
+      <origin
+        xyz="0 0 0"   rpy="0 0 0" />
+      <mass
+        value="${mass_wheel}" />
+      <inertia
+        ixx="${mass_wheel*wheel_radius*wheel_radius/2}"  ixy="0"  ixz="0"
+        iyy="${mass_wheel*wheel_radius*wheel_radius/4}"  iyz="0"
+        izz="${mass_wheel*wheel_radius*wheel_radius/4}" />
+    </inertial>
+
+
+    <visual>
+      <origin
+        xyz="0 0 0"  rpy="0 0 0" />
+      <geometry>
+        <mesh  filename="package://self_balancing_bot/meshes/wheel.stl" scale="10 10 10"/>
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0 0 0 1" />
+      </material>
+    </visual>
+
+
+    <collision>
+      <origin
+        xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://self_balancing_bot/meshes/wheel.stl" scale="10 10 10"/>
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint type="continuous" name="L_wheel_shaft">
+    <origin xyz  = "${motor_width + wheel_width/2} 0.005 0"  rpy="0 0 0" />
+    <parent link ="motor_L" />
+    <child link ="wheel_L" />
+    <axis xyz="1 0 0" rpy="0 0 0" />
+    <limit effort="10000"  velocity="10000" />
+    <dynamics damping="1.0" friction="1.0" />
+  </joint>
+
+
+  <!-- <transmission name="rotL">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="L_wheel_shaft">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+
+    <actuator name="motorL">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission> -->
+
+
+
+
+
+
+  <link
+    name="side_L">
+    <inertial>
+      <origin
+        xyz="0 0 0"  rpy="1.5714 0 1.5714" />
+      <mass
+        value="${mass_side}" />
+      <inertia
+        ixx="${mass_side*side_length*side_length/12}"          ixy="0"        ixz="0"
+        iyy="${mass_side*side_width*side_width/12}"             iyz="0"
+        izz="${mass_side*side_length*side_length/12 + mass_side*side_width*side_width/12}" />
+    </inertial>
+
+    <visual>
+      <origin
+        xyz="0 0 0" rpy="1.5714 0 1.5714" />
+      <geometry>
+        <mesh
+          filename="package://self_balancing_bot/meshes/side.stl" scale="10 10 10"/>
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+
+    <collision>
+      <origin
+        xyz="0 0 0" rpy="1.5714 0 1.5714" />
+      <geometry>
+        <mesh
+          filename="package://self_balancing_bot/meshes/side.stl" scale="10 10 10"/>
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint type="fixed" name="L_side_mount">
+    <origin xyz  = "${base_slot+base_height} 0 ${wheel_radius+motor_height/2+base_height + base_clearance}"  rpy="0 0 0" />
+    <parent link ="base" />
+    <child link ="side_L" />
+    <axis xyz="1 0 0" rpy="0 0 0" />
+  </joint>
+
+
+
+
+
+  <link
+    name="side_R">
+    <inertial>
+      <origin
+        xyz="0 0 0"  rpy="1.5714 0 1.5714" />
+      <mass
+        value="${mass_side}" />
+      <inertia
+        ixx="${mass_side*side_length*side_length/12}"          ixy="0"        ixz="0"
+        iyy="${mass_side*side_width*side_width/12}"             iyz="0"
+        izz="${mass_side*side_length*side_length/12+ mass_side*side_width*side_width/12}" />
+    </inertial>
+
+    <visual>
+      <origin
+        xyz="0 0 0" rpy="1.5714 0 1.5714" />
+      <geometry>
+        <mesh
+          filename="package://self_balancing_bot/meshes/side.stl" scale="10 10 10"/>
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+
+    <collision>
+      <origin
+        xyz="0 0 0" rpy="1.5714 0 1.5714" />
+      <geometry>
+        <mesh
+          filename="package://self_balancing_bot/meshes/side.stl" scale="10 10 10" />
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint type="fixed" name="R_side_mount">
+    <origin xyz  = "-${base_slot+base_height} 0 ${wheel_radius+motor_height/2+base_height + base_clearance}"  rpy="0 0 0" />
+    <parent link ="base" />
+    <child link ="side_R" />
+    <axis xyz="1 0 0" rpy="0 0 0" />
+  </joint>
+
+
+
+  <link
+    name="Top">
+    <inertial>
+      <origin
+        xyz="0 0 0" rpy="0 0 0" />
+      <mass
+        value="${mass_base}" />
+      <inertia
+        ixx="${mass_base*base_length*base_length/12}"          ixy="0"    ixz="0"
+        iyy="${mass_base*base_width*base_width/3}"             iyz="0"
+        izz="${mass_base*base_width*base_width/3 +mass_base*base_length*base_length/12}" />
+    </inertial>
+
+    <visual>
+      <origin
+        xyz="0 0 0"  rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://self_balancing_bot/meshes/base_link.stl" scale="10 10 10"/>
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+
+    <collision>
+      <origin
+        xyz="0 0 0"  rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://self_balancing_bot/meshes/base_link.stl" scale="10 10 10"/>
+      </geometry>
+    </collision>
+
+  </link>
+
+
+  <joint type="fixed" name="Top_mount">
+    <origin xyz  = "0 0 ${wheel_radius+motor_height/2+base_height+ side_height + base_clearance}"  rpy="0 0 0" />
+    <parent link ="base" />
+    <child link ="Top" />
+    <axis xyz="1 0 0" rpy="0 0 0" />
+  </joint>
+
+
+  <link
+    name="motor_R">
+    <inertial>
+      <origin
+        xyz="0 0 0"  rpy="0 0 0" />
+      <mass
+        value="${mass_motor}" />
+      <inertia
+        ixx="${mass_motor*motor_length*motor_length/12 + mass_motor*motor_height*motor_height/12}"       ixy="0"    ixz="0"
+        iyy="${mass_motor*motor_width*motor_width/12   + mass_motor*motor_height*motor_height/12}"       iyz="0"
+        izz="${mass_motor*motor_width*motor_width/12   + mass_motor*motor_length*motor_length/12}" />
+    </inertial>
+
+    <visual>
+      <origin
+        xyz="0 0 0"  rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://self_balancing_bot/meshes/motor.STL" scale="10 10 10"/>
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 0 1" />
+      </material>
+    </visual>
+
+    <collision>
+      <origin
+        xyz="0 0 0"  rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://self_balancing_bot/meshes/motor.STL"  scale="10 10 10"/>
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint type="fixed" name="R_motor_mount">
+    <origin xyz  = "-${base_width} 0 ${wheel_radius}"  rpy="0 0 0" />
+    <parent link ="base" />
+    <child link ="motor_R" />
+    <axis xyz="1 0 0" rpy="0 0 0" />
+  </joint>
+
+
+
+
+  <link
+    name="wheel_R">
+
+    <inertial>
+      <origin
+        xyz="0 0 0"   rpy="0 -3.14 0" />
+      <mass
+        value="${mass_wheel}" />
+      <inertia
+        ixx="${mass_wheel*wheel_radius*wheel_radius/2}"  ixy="0"  ixz="0"
+        iyy="${mass_wheel*wheel_radius*wheel_radius/4}"  iyz="0"
+        izz="${mass_wheel*wheel_radius*wheel_radius/4}" />
+    </inertial>
+
+
+    <visual>
+      <origin
+        xyz="0 0 0"  rpy="0 -3.14 0" />
+      <geometry>
+        <mesh  filename="package://self_balancing_bot/meshes/wheel.stl" scale="10 10 10"/>
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0 0 0 1" />
+      </material>
+    </visual>
+
+
+    <collision>
+      <origin
+        xyz="0 0 0" rpy="0 -3.14 0" />
+      <geometry>
+        <mesh
+          filename="package://self_balancing_bot/meshes/wheel.stl" scale="10 10 10"/>
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint type="continuous" name="R_wheel_shaft">
+    <origin xyz  = "-${motor_width + wheel_width/2} 0.005 0"  rpy="0 0 0" />
+    <parent link ="motor_R" />
+    <child link ="wheel_R" />
+    <axis xyz="1 0 0" rpy="0 0 0" />
+    <limit effort="10000"  velocity="10000" />
+    <dynamics damping="1.0" friction="1.0" />
+  </joint>
+<!-- 
+  <transmission name="rotR">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="R_wheel_shaft">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+
+    <actuator name="motorR">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+ -->
+
+<link name="imu_sensor">
+    <inertial>
+      <mass value="0.01"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia
+        ixx="1e-6" ixy="0.0" ixz="0.0"
+        iyy="1e-6" iyz="0.0"
+        izz="1e-6"
+      />
+    </inertial>
+
+    <collision>
+      <origin xyz="0 0 0.01" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.01 0.01 0.01"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0.01" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.01 0.01 0.01"/>
+      </geometry>
+    </visual>
+
+  </link>
+
+<joint name="imu_joint" type="fixed">
+    <origin xyz="0 0 0.0065" rpy="0 0 0" />
+    <parent link="Top"/>
+    <child link="imu_sensor" />  
+    <axis xyz="0 1 0"/> 
+</joint>
+
+
+
+<gazebo reference="imu_sensor">
+    <gravity>true</gravity>
+    <sensor name="imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>100</update_rate>
+      <visualize>true</visualize>
+      <topic>__default_topic__</topic>
+      <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+        <topicName>imu</topicName>
+        <bodyName>imu_link</bodyName>
+        <updateRateHZ>10.0</updateRateHZ>
+        <gaussianNoise>0.0</gaussianNoise>
+        <xyzOffset>0 0 0</xyzOffset>
+        <rpyOffset>0 0 0</rpyOffset>
+        <frameName>imu_link</frameName>
+        <initialOrientationAsReference>false</initialOrientationAsReference>
+      </plugin>
+      <pose>0 0 0 0 0 0</pose>
+    </sensor>
+  </gazebo>
+
+
+  <gazebo>
+    <plugin filename="libgazebo_ros_diff_drive.so" name="diff_drive_controller">
+      <alwaysOn>true</alwaysOn>
+      <updateRate>20</updateRate>
+      <leftJoint>L_wheel_shaft</leftJoint>
+      <rightJoint>R_wheel_shaft</rightJoint>
+      <wheelSeparation>${2*base_width + motor_width + wheel_width}</wheelSeparation>
+      <wheelDiameter>${wheel_radius*2}</wheelDiameter>
+      <!-- <torque>1</torque> -->
+      <commandTopic>cmd_vel</commandTopic>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <robotBaseFrame>base</robotBaseFrame>
+      <publishWheelTF>1</publishWheelTF>
+      <publishTF>1</publishTF>
+      <publishWheelJointState>true</publishWheelJointState>
+      <publishOdomTF>true</publishOdomTF>
+      <wheelAcceleration>050</wheelAcceleration>
+      <wheelTorque>20</wheelTorque>
+      <odometrySource>world</odometrySource>
+      <legacyMode>false</legacyMode>
+    </plugin>
+  </gazebo>
+
+
+</robot>

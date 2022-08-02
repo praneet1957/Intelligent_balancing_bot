@@ -1,0 +1,4 @@
+gazebo_ros_control/pid_gains:
+  L_wheel_shaft : {p: 10.0, i: 0, d: 0}
+  R_wheel_shaft : {p: 10.0, i: 0, d: 0}
+  

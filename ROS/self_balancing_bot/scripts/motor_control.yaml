@@ -1,0 +1,22 @@
+self_balancing_bot:
+  # Publish all joint states -----------------------------------
+  jointL_velocity_controller:
+    type: velocity_controllers/JointVelocityController
+    joint: L_wheel_shaft
+    pid: {p: 50.0, i: 0.01, d: 10.0}
+
+
+  jointR_velocity_controller:
+    type: velocity_controllers/JointVelocityController
+    joint: R_wheel_shaft
+    pid: {p: 100.0, i: 0.01, d: 10.0}
+
+  # bot_controller:
+  #   type : velocity_controllers/JointVelocityController
+  #   joints:
+  #     - L_wheel_shaft
+  #     - R_wheel_shaft
+
+  #   gains:
+  #     L_wheel_shaft : {p: 100.0, i: 0.01, d: 10.0}
+  #     R_wheel_shaft : {p: 100.0, i: 0.1, d: 10.0}
